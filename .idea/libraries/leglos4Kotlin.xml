@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="leglos4Kotlin">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Downloads/leglos4Kotlin.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Downloads/leglosKotlin-sources.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/leglosKotlin-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
