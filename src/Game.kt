@@ -84,10 +84,10 @@ class Game {
 
             items[i].reactionForMousePressed = {
                 if(items[i] == ball){
-                    pet.inventory.add(ballItem)
+                    pet.addItem(ballItem)
                     
                 }else if (items[i] == ufo){
-                    pet.inventory.add(ufoItem)
+                    pet.addItem(ufoItem)
                 }
 
                 println("saved!")
@@ -100,7 +100,13 @@ class Game {
                 when(buttons[i]) {
                     kekseBtn -> pet.doActivity(kekseActivity)
                     laufenBtn -> pet.doActivity(laufenActivity)
-                    fussballBtn -> pet.doActivity(fussballActivity)
+                    fussballBtn ->
+                        if (pet.hasItem(ballItem)){
+                            pet.doActivity(fussballActivity)
+                        }else{
+                            println("Dein Pet hat kein Ball im Inventar!")
+                        }
+
                 }
             }
         }

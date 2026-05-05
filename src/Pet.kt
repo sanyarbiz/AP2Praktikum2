@@ -10,6 +10,25 @@ class Pet {
     var happiness = 50
     var hungry : Boolean = if (health.energy < 20)  true else false
 
+
+    var minutesAwake : Int = 0
+        set(value){
+            if(value > 0 && value % 10 == 0){
+                health.energy -= 1
+                println("10 Minuten sind vergangen. Energie ist jetzt ${health.energy} und Happiness $happiness")
+
+            }
+            field =  value //Backing Field: setzt den neuen Wert jedes mal, wenn eine Spiel-Minute vergeht
+        }
+
+    var hoursAwake : Int //Hat keinen eigenen Wert, gibt stattdessen minutesAwake / 60 zurück.
+        get() {
+            return minutesAwake / 60
+        }
+        set(value) {
+            minutesAwake = value * 60
+        }
+
     val inventory =  mutableListOf<Item>()
 
     //Energie Anzeiger
@@ -23,14 +42,22 @@ class Pet {
 
     fun addItem(item: Item){
 
-        if(item.category == ItemCategory.FOOD){
+        try {
+            if(item.category != ItemCategory.FOOD){
+                throw IllegalArgumentException("Fehler: ${item.name} ist kein Essen")
+            }
+
             feed(item)
             hungry = health.energy < 20
-        }else{
+        } catch (e: IllegalArgumentException) {
+
+            println("Fehler abgefangen: ${e.message}")
             inventory.add(item)
             happiness += item.happinessImpact
             health.energy += item.energyImpact
             hungry = health.energy < 20
+
+
         }
 
         println(item.name + " hinzugefügt. Happiness: $happiness")
@@ -55,11 +82,14 @@ class Pet {
         energy.text.content = health.energy.toString() + "E"
     }
 
+    fun hasItem(item: Item) : Boolean = inventory.contains(item)
+
     init {
 
         actor.animation.everyNsteps.timeSpan = 200
         actor.animation.everyNsteps.reactionForTimePassed = {
             lifesGoesOn()
+            minutesAwake++
         }
     }
 }
