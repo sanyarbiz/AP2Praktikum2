@@ -1,7 +1,11 @@
 import de.th_koeln.basicstage.Actor
 import de.th_koeln.basicstage.ButtonActor
 import de.th_koeln.basicstage.Stage
+import de.th_koeln.basicstage.coordinatesystem.Location
 import de.th_koeln.basicstage.coordinatesystem.WorldConstants
+import de.th_koeln.basicstage.motion.ActorTarget
+import de.th_koeln.basicstage.motion.Direction
+import de.th_koeln.basicstage.motion.Target
 import de.th_koeln.imageprovider.Assets
 import kotlin.random.Random
 
@@ -28,6 +32,12 @@ class Game {
     //Activities
 
     val kekseActivity = Activity()
+    val keks1 = Actor(Assets.snacks.COOKIE1)
+    val keks2 = Actor(Assets.snacks.COOKIE2)
+    val keks3 = Actor(Assets.snacks.COOKIE3)
+
+    val kekse = arrayOf<Actor>(keks1, keks2, keks3)
+
     val laufenActivity = Activity()
     val fussballActivity = Activity()
 
@@ -38,7 +48,7 @@ class Game {
         stage.addActor(pet.actor)
         pet.actor.x = 100
 
-        //Pet Energy Anzeiger
+        //Energy Anzeiger
         stage.addActor(pet.energy)
         pet.energy.text.content = pet.health.energy.toString() + "E"
 
@@ -73,6 +83,13 @@ class Game {
         ballItem.happinessImpact = 50
         ufoItem.happinessImpact = 100
 
+        //Alle Kekse verstecken
+        for (i in 0..kekse.size-1){
+            stage.addActor(kekse[i])
+            kekse[i].visible = false
+        }
+
+        //Items Reaction
         for (i in 0..items.size-1) {
             val randX = Random.nextInt(WorldConstants.STAGE_WIDTH)
             val randY = Random.nextInt(WorldConstants.STAGE_HEIGHT)
@@ -95,17 +112,58 @@ class Game {
         }
 
 
+        //Activity buttons Reaction
         for (i in 0..buttons.size-1) {
             buttons[i].reactionForMousePressed = {
                 when(buttons[i]) {
-                    kekseBtn -> pet.doActivity(kekseActivity)
-                    laufenBtn -> pet.doActivity(laufenActivity)
-                    fussballBtn ->
-                        if (pet.hasItem(ballItem)){
+                    kekseBtn -> {
+
+                        //Alle Kekse sichtbar machen und verteilen
+                        for (i in 0..kekse.size - 1) {
+                            kekse[i].visible = true
+                            kekse[i].x = Random.nextInt(WorldConstants.STAGE_WIDTH)
+                            kekse[i].y = Random.nextInt(WorldConstants.STAGE_HEIGHT)
+                        }
+                        pet.doActivity(kekseActivity)
+                    }
+
+
+                    laufenBtn -> {
+
+                        with(pet.actor.animation.turtleControl){
+
+                            for(i in 0..10){
+                                moveRightBy(10)
+                            }
+
+                            for (i in 0..10){
+                                moveLeftBy(10)
+                            }
+                        }
+
+
+                        pet.doActivity(laufenActivity)
+                    }
+
+
+                    fussballBtn -> {
+                        if (pet.hasItem(ballItem)) {
+
+                            ball.motion.speed = 5
+                            ball.motion.target = ActorTarget(pet.actor)
+
+                            ball.reactionForTargetReached = {
+                                ball.motion.rotate(180)
+                                ball.motion.target = null
+                                ball.motion.speed = 20
+                            }
+
+
                             pet.doActivity(fussballActivity)
-                        }else{
+                        } else {
                             println("Dein Pet hat kein Ball im Inventar!")
                         }
+                    }
 
                 }
             }

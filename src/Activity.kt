@@ -7,8 +7,6 @@ class Activity {
         pet.happiness += happinessImpact
         pet.health.energy += energyImpact
 
-        println("${pet.happiness} ist der neue Hapinness Wert")
-        println("${pet.health.health} ist der health Wert")
     }
 
 }

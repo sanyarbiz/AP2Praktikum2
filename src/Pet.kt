@@ -10,6 +10,7 @@ class Pet {
     var happiness = 50
     var hungry : Boolean = if (health.energy < 20)  true else false
 
+    private var lastActivity : Activity? = null
 
     var minutesAwake : Int = 0
         set(value){
@@ -77,9 +78,23 @@ class Pet {
 
     }
 
-    fun doActivity(activtiy : Activity){
-        activtiy.execute(this)
-        energy.text.content = health.energy.toString() + "E"
+    fun doActivity(activity : Activity){
+
+        if(activity == lastActivity){
+            happiness -= Random.nextInt(10, 30)
+            energy.text.content = health.energy.toString() + "E"
+
+            println("${happiness} ist der neue Hapinness Wert")
+            println("${health.health} ist der health Wert")
+        }else{
+            activity.execute(this)
+            energy.text.content = health.energy.toString() + "E"
+
+            println("${happiness} ist der neue Hapinness Wert")
+            println("${health.health} ist der health Wert")
+        }
+
+        lastActivity = activity
     }
 
     fun hasItem(item: Item) : Boolean = inventory.contains(item)
